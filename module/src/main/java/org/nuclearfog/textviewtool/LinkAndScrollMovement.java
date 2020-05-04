@@ -11,6 +11,13 @@ import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_MOVE;
 import static android.view.MotionEvent.ACTION_UP;
 
+/**
+ * This class unites {@link ScrollingMovementMethod} and {@link android.text.method.LinkMovementMethod}
+ * While scrolling a TextView, the spans stay locked until the next tap event.
+ *
+ * @author nuclearfog
+ * @version 1.0
+ */
 public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
     private static final LinkAndScrollMovement instance = new LinkAndScrollMovement();
@@ -54,6 +61,10 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
         return super.onTouchEvent(widget, buffer, event);
     }
 
+    /**
+     * Get singleton instance of the movement method
+     * @return movement method object
+     */
     public static LinkAndScrollMovement getInstance() {
         return instance;
     }
