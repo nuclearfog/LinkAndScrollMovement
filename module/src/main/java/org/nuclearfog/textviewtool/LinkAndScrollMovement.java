@@ -1,10 +1,12 @@
 package org.nuclearfog.textviewtool;
 
+import android.os.Build;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
+import android.view.ViewParent;
 import android.widget.TextView;
 
 import static android.view.MotionEvent.ACTION_DOWN;
@@ -16,7 +18,7 @@ import static android.view.MotionEvent.ACTION_UP;
  * While scrolling a TextView, the spans stay locked until the next tap event.
  *
  * @author nuclearfog
- * @version 1.0
+ * @version 1.1
  */
 public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
@@ -32,6 +34,7 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
     public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
         switch(event.getAction()) {
             case ACTION_DOWN:
+                lockParentScrolling(widget, true);
                 clickLock = false;
                 break;
 
@@ -40,6 +43,7 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
                 break;
 
             case ACTION_UP:
+                lockParentScrolling(widget, false);
                 if (!clickLock) {
                     int x = (int) event.getX();
                     int y = (int) event.getY();
@@ -67,5 +71,19 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
      */
     public static LinkAndScrollMovement getInstance() {
         return instance;
+    }
+
+    /**
+     * lock parent view scrolling
+     * @param widget interacting TextView
+     * @param lock true if parent views scrolling should be locked
+     */
+    private void lockParentScrolling(TextView widget, boolean lock) {
+        ViewParent parent = widget.getParent();
+        if (Build.VERSION.SDK_INT >= 16 && parent != null) {
+            if (widget.getLineCount() > widget.getMaxLines()) {
+                parent.requestDisallowInterceptTouchEvent(lock);
+            }
+        }
     }
 }
