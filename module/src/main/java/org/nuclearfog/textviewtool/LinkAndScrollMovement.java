@@ -1,6 +1,5 @@
 package org.nuclearfog.textviewtool;
 
-import android.os.Build;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.method.ScrollingMovementMethod;
@@ -18,7 +17,7 @@ import static android.view.MotionEvent.ACTION_UP;
  * While scrolling a TextView, the spans stay locked until the next tap event.
  *
  * @author nuclearfog
- * @version 1.1
+ * @version 1.2
  */
 public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
@@ -67,7 +66,7 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
     /**
      * Get singleton instance of the movement method
-     * @return movement method object
+     * @return LinkAndScrollingMovementMethod object
      */
     public static LinkAndScrollMovement getInstance() {
         return instance;
@@ -80,10 +79,10 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
      */
     private void lockParentScrolling(TextView widget, boolean lock) {
         ViewParent parent = widget.getParent();
-        if (Build.VERSION.SDK_INT >= 16 && parent != null) {
-            if (widget.getLineCount() > widget.getMaxLines()) {
-                parent.requestDisallowInterceptTouchEvent(lock);
-            }
+        int lineCount = widget.getLineCount();
+        int maxLines = widget.getMaxLines();
+        if ( parent != null && maxLines > 0 && lineCount > maxLines ) {
+            parent.requestDisallowInterceptTouchEvent(lock);
         }
     }
 }
