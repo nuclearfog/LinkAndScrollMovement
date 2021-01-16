@@ -9,7 +9,6 @@ import android.view.ViewParent;
 import android.widget.TextView;
 
 import static android.view.MotionEvent.ACTION_DOWN;
-import static android.view.MotionEvent.ACTION_MOVE;
 import static android.view.MotionEvent.ACTION_UP;
 
 /**
@@ -17,14 +16,24 @@ import static android.view.MotionEvent.ACTION_UP;
  * While scrolling a TextView, the spans stay locked until the next tap event.
  *
  * @author nuclearfog
- * @version 1.2
+ * @version 1.3
  */
 public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
     private static final LinkAndScrollMovement instance = new LinkAndScrollMovement();
-    private static final int NO_SCROLL = -1;
 
-    private int scroll = NO_SCROLL;
+    /**
+     * setup the x axis threshold to disable click events.
+     */
+    private static final int THRESHOLD_WIDTH_DIVIDER = 6;
+
+    /**
+     * setup the y axis threshold to disable click events.
+     */
+    private static final int THRESHOLD_HEIGHT_DIVIDER = 3;
+
+    private int xScroll = 0;
+    private int yScroll = 0;
 
     private LinkAndScrollMovement() {
         super();
@@ -36,13 +45,16 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
         switch(event.getAction()) {
             case ACTION_DOWN:
                 lockParentScrolling(widget, true);
-                scroll = widget.getScrollY();
+                xScroll = widget.getScrollX();
+                yScroll = widget.getScrollY();
                 break;
 
             case ACTION_UP:
                 lockParentScrolling(widget, false);
-                int scrollDiff = Math.abs(widget.getScrollY() - scroll);
-                if (scrollDiff <= widget.getTextSize() / 2) {
+                int deltaX = Math.abs(widget.getScrollY() - xScroll);
+                int deltaY = Math.abs(widget.getScrollY() - yScroll);
+                if (deltaY <= widget.getTextSize() / THRESHOLD_HEIGHT_DIVIDER &&
+                    deltaX <= widget.getWidth() / THRESHOLD_WIDTH_DIVIDER) {
                     int x = (int) event.getX();
                     int y = (int) event.getY();
                     x -= widget.getTotalPaddingLeft();
