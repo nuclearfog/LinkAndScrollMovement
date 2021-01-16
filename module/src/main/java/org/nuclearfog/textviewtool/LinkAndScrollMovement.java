@@ -38,7 +38,10 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
                 break;
 
             case ACTION_MOVE:
-                clickLock = true;
+                // Threshold to disable span click
+                int scroll = widget.getScrollY();
+                if (scroll > widget.getTextSize() / 2)
+                    clickLock = true;
                 break;
 
             case ACTION_UP:
@@ -66,6 +69,7 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
     /**
      * Get singleton instance of the movement method
+     *
      * @return LinkAndScrollingMovementMethod object
      */
     public static LinkAndScrollMovement getInstance() {
@@ -74,6 +78,7 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
     /**
      * lock parent view scrolling
+     *
      * @param widget interacting TextView
      * @param lock true if parent views scrolling should be locked
      */
