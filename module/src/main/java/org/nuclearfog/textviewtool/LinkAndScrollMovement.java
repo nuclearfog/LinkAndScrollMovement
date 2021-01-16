@@ -22,7 +22,9 @@ import static android.view.MotionEvent.ACTION_UP;
 public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
     private static final LinkAndScrollMovement instance = new LinkAndScrollMovement();
-    private boolean clickLock;
+    private static final int NO_SCROLL = -1;
+
+    private int scroll = NO_SCROLL;
 
     private LinkAndScrollMovement() {
         super();
@@ -34,19 +36,13 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
         switch(event.getAction()) {
             case ACTION_DOWN:
                 lockParentScrolling(widget, true);
-                clickLock = false;
-                break;
-
-            case ACTION_MOVE:
-                // Threshold to disable span click
-                int scroll = widget.getScrollY();
-                if (scroll > widget.getTextSize() / 2)
-                    clickLock = true;
+                scroll = widget.getScrollY();
                 break;
 
             case ACTION_UP:
                 lockParentScrolling(widget, false);
-                if (!clickLock) {
+                int scrollDiff = Math.abs(widget.getScrollY() - scroll);
+                if (scrollDiff <= widget.getTextSize() / 2) {
                     int x = (int) event.getX();
                     int y = (int) event.getY();
                     x -= widget.getTotalPaddingLeft();
@@ -57,7 +53,7 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
                     int line = layout.getLineForVertical(y);
                     int off = layout.getOffsetForHorizontal(line, x);
                     ClickableSpan[] link = buffer.getSpans(off, off, ClickableSpan.class);
-                    if (link.length != 0) {
+                    if (link.length > 0) {
                         link[0].onClick(widget);
                         return true;
                     }
