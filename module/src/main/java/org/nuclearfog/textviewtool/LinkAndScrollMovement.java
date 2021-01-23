@@ -16,7 +16,7 @@ import static android.view.MotionEvent.ACTION_UP;
  * While scrolling a TextView, the spans stay locked until the next tap event.
  *
  * @author nuclearfog
- * @version 1.3
+ * @version 1.4
  */
 public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
@@ -32,13 +32,15 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
      */
     private static final int THRESHOLD_HEIGHT_DIVIDER = 3;
 
+    private int thresholdX = THRESHOLD_WIDTH_DIVIDER;
+    private int thresholdY = THRESHOLD_HEIGHT_DIVIDER;
+
     private int xScroll = 0;
     private int yScroll = 0;
 
     private LinkAndScrollMovement() {
         super();
     }
-
 
     @Override
     public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
@@ -51,10 +53,9 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
             case ACTION_UP:
                 lockParentScrolling(widget, false);
-                int deltaX = Math.abs(widget.getScrollY() - xScroll);
+                int deltaX = Math.abs(widget.getScrollX() - xScroll);
                 int deltaY = Math.abs(widget.getScrollY() - yScroll);
-                if (deltaY <= widget.getTextSize() / THRESHOLD_HEIGHT_DIVIDER &&
-                    deltaX <= widget.getWidth() / THRESHOLD_WIDTH_DIVIDER) {
+                if (deltaY <= widget.getTextSize() / thresholdY && deltaX <= widget.getWidth() / thresholdX) {
                     int x = (int) event.getX();
                     int y = (int) event.getY();
                     x -= widget.getTotalPaddingLeft();
@@ -76,12 +77,14 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
     }
 
     /**
-     * Get singleton instance of the movement method
-     *
-     * @return LinkAndScrollingMovementMethod object
+     * sets maximum threshold to lock link clicks
+     * @param thrX threshold for x axis
+     * @param thrY threshold for y axis
      */
-    public static LinkAndScrollMovement getInstance() {
-        return instance;
+    public LinkAndScrollMovement setThreshold(int thrX, int thrY) {
+        thresholdX = thrX;
+        thresholdY = thrY;
+        return this;
     }
 
     /**
@@ -97,5 +100,14 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
         if ( parent != null && maxLines > 0 && lineCount > maxLines ) {
             parent.requestDisallowInterceptTouchEvent(lock);
         }
+    }
+
+    /**
+     * Get singleton instance of the movement method
+     *
+     * @return LinkAndScrollingMovementMethod object
+     */
+    public static LinkAndScrollMovement getInstance() {
+        return instance;
     }
 }
