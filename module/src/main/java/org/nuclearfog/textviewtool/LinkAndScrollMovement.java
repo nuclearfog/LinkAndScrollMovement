@@ -16,7 +16,8 @@ import static android.view.MotionEvent.ACTION_UP;
  * While scrolling a TextView, the spans stay locked until the next tap event.
  *
  * @author nuclearfog
- * @version 1.4
+ * @version 1.4.1
+ * @since 1.0
  */
 public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
@@ -38,6 +39,8 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
     private int xScroll = 0;
     private int yScroll = 0;
 
+    /**
+     */
     private LinkAndScrollMovement() {
         super();
     }
@@ -78,6 +81,7 @@ public class LinkAndScrollMovement extends ScrollingMovementMethod {
 
     /**
      * sets maximum threshold to lock link clicks
+     *
      * @param thrX threshold for x axis
      * @param thrY threshold for y axis
      */
