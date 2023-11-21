@@ -4,10 +4,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    namespace 'org.nuclearfog.textviewtool'
+    compileSdkVersion 34
+    buildToolsVersion '34.0.0'
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 30
     }
 
     buildTypes {
@@ -16,9 +17,16 @@ android {
         }
     }
 
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -29,7 +37,7 @@ afterEvaluate {
                 from components.release
                 groupId 'com.github.nuclearfog'
                 artifactId 'LinkAndScrollMovement'
-                version '1.4.1'
+                version '1.4.2'
             }
         }
     }
